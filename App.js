@@ -18,6 +18,31 @@ const heading = React.createElement(
   "Hello World! from React"
 );
 
+const jsxHeading = <h1 id="heading">This heading is added on UI using jsx</h1>;
+
+const Title = () => (
+  <h1 id="heading" className="title">
+    component composition
+  </h1>
+);
+// without return
+
+const FuctionalComponent = () => {
+  return (
+    <div id="container">
+      <Title />
+      <Title></Title>
+      <h1>This is function component</h1>
+      {/* can write any js code inside {} bracket in JXS syntax */}
+      {jsxHeading}
+      {Title()}
+      <h2>{100 + 200}</h2>
+    </div>
+  );
+};
+// with return
+
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
-root.render(parent);
+// root.render(jsxHeading);
+root.render(<FuctionalComponent />);
