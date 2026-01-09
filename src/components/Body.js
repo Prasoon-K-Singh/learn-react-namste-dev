@@ -2,10 +2,11 @@ import { useState, useEffect } from "react";
 import RestaurantCard from "./RestaurantCard";
 import Shimmer from "./Shimmer";
 import { Link } from "react-router";
-import { REST_DETAIL_API } from "../utils/constants";
+import useRestaurantList from "../utils/useRestaurantList";
+import useOnlineStatus from "../utils/useOnlineStatus";
 
 const Body = () => {
-  const [listOfResData, setListOfResData] = useState([]);
+  // const [listOfResData, setListOfResData] = useState([]);
   const [filterListOfResData, setFilterListOfResData] = useState([]);
   const [searchText, setSearchText] = useState("");
 
@@ -18,20 +19,32 @@ const Body = () => {
   // const listOfResData = arr[0];
   // const setListOfResData = arr[1];
 
+  // useEffect(() => {
+  //   fetchData();
+  // }, []);
+
+  // const fetchData = async () => {
+  //   const data = await fetch(REST_DETAIL_API);
+
+  //   const json = await data.json();
+
+  //   setListOfResData(json?.data?.cards?.slice(3) ?? []);
+  //   setFilterListOfResData(json?.data?.cards?.slice(3) ?? []);
+  // };
+
+  const resList = useRestaurantList();
+
   useEffect(() => {
-    fetchData();
-  }, []);
+    setFilterListOfResData(resList);
+  }, [resList]);
 
-  const fetchData = async () => {
-    const data = await fetch(REST_DETAIL_API);
+  const isOnline = useOnlineStatus();
 
-    const json = await data.json();
+  if (!isOnline) {
+    return <h1>No network! pls check your internet connection</h1>;
+  }
 
-    setListOfResData(json?.data?.cards?.slice(3) ?? []);
-    setFilterListOfResData(json?.data?.cards?.slice(3) ?? []);
-  };
-
-  return listOfResData.length === 0 ? (
+  return resList.length === 0 ? (
     <Shimmer />
   ) : (
     <div className="body">
@@ -44,7 +57,7 @@ const Body = () => {
           />
           <button
             onClick={() => {
-              const filterSearch = listOfResData.filter((item) =>
+              const filterSearch = resList.filter((item) =>
                 item.card.card.info.name
                   .toLowerCase()
                   .includes(searchText.toLowerCase())
@@ -58,7 +71,7 @@ const Body = () => {
         <button
           className="filter-btn"
           onClick={() => {
-            const filter = listOfResData.filter(
+            const filter = resList.filter(
               (item) => item.card.card.info.avgRating > 4.1
             );
             setFilterListOfResData(filter);
